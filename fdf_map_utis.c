@@ -21,6 +21,20 @@ int find_max_z_value(t_Map *map)
     return max_z;
 }
 
+int find_min_z_value(t_Map *map)
+{
+    int min_z = map->values[0][0];
+    for (int y = 0; y < map->height; y++)
+    {
+        for (int x = 0; x < map->width; x++)
+        {
+            if (map->values[y][x] < min_z)
+                min_z = map->values[y][x];
+        }
+    }
+    return min_z;
+}
+
 int *string_to_int_array(char *str, int *outLength)
 {
     int length = strlen(str);
@@ -57,42 +71,14 @@ int *string_to_int_array(char *str, int *outLength)
     return array;
 }
 
-int count_integers_in_string(char *str)
-{
-    int count = 0;
-    int length = strlen(str);
-    int inNumber = 0;
-
-    for (int i = 0; i <= length - 1; i++)
-    {
-        if (!isspace(str[i]) && str[i] != '\0')
-        {
-            if (!inNumber)
-            {
-                inNumber = 1;
-                count++;
-            }
-        }
-        else
-        {
-            inNumber = 0;
-        }
-    }
-
-    return count;
-}
-
 void fill_map_lines(t_Map *map, char *line)
 {
     int length;
-    printf("before string to arr\n");
     int *intArray = string_to_int_array(line, &length);
-    printf("after string to arr\n");
     if (intArray == NULL)
         return;
 
     // Allocate memory for the new row
-    printf("before realloc\n");
     int **new_values = (int **)ft_realloc(map->values, sizeof(int *) * (map->height + 1));
     if (new_values == NULL)
     {
@@ -100,41 +86,42 @@ void fill_map_lines(t_Map *map, char *line)
         perror("Error reallocating memory");
         return;
     }
-    printf("after realloc\n");
 
     map->values = new_values;
     map->values[map->height] = intArray;
     map->width = length;
     map->height++;
-    printf("after updating map\n");
 }
 
-int map_filling(t_Map *map)
+int map_filling(t_Map *map, char *file_name)
 {
     int fd;
     char *line;
+    char *folder_line = "test_maps/";
+    char *file_path = malloc(sizeof(char) * (strlen(folder_line) + strlen(file_name) + 1));
+    if (file_path == NULL)
+        return (-1);
+    strcpy(file_path, folder_line);
+    strcat(file_path, file_name);
 
-    printf("before openfile\n");
-    fd = open_file("test_maps/42.fdf");
-    printf("openfile\n");
+    fd = open_file(file_path);
     if (fd <= 1)
     {
-        perror("Error opening file");
+        free(file_path);
+        printf("Error opening file. If test_maps folder is not present,\ncreate it and put the map files in it pls.\n");
+        exit(1);
         return (-1);
     }
 
-    printf("before gnl\n");
     while ((line = get_next_line(fd)) != NULL)
     {
         fill_map_lines(map, line);
         if (map->height > 0 && map->values != NULL && map->values[0] != NULL)
         {
-            printf("gnl:%i\n", map->values[0][0]);
         }
         free(line);
     }
 
-    printf("after gnl\n");
     if (map->height == 0)
     {
         close(fd);

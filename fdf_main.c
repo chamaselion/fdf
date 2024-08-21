@@ -1,96 +1,5 @@
 #include "fdf.h"
 
-int open_file(const char *filepath)
-{
-    int fd = open(filepath, O_RDONLY);
-    return fd;
-}
-
-void *ft_realloc(void *ptr, size_t new_size)
-{
-    void *new_ptr;
-
-    if (new_size == 0)
-    {
-        free(ptr);
-        return NULL;
-    }
-
-    new_ptr = malloc(new_size);
-    if (new_ptr == NULL)
-        return NULL;
-
-    if (ptr != NULL)
-    {
-        memcpy(new_ptr, ptr, new_size);
-        free(ptr);
-    }
-
-    return new_ptr;
-}
-
-
-int find_min_z_value(t_Map *map)
-{
-    int min_z = map->values[0][0];
-    for (int y = 0; y < map->height; y++)
-    {
-        for (int x = 0; x < map->width; x++)
-        {
-            if (map->values[y][x] < min_z)
-                min_z = map->values[y][x];
-        }
-    }
-    return min_z;
-}
-
-void draw_line(void *image, int x0, int y0, int x1, int y1, int color)
-{
-    int image_width = 800;
-    int image_height = 600;
-    if (x0 < 0 || x0 >= image_width || y0 < 0 || y0 >= image_height ||
-        x1 < 0 || x1 >= image_width || y1 < 0 || y1 >= image_height)
-    {
-        printf("Coordinates out of bounds: (%d, %d) to (%d, %d)\n", x0, y0, x1, y1);
-        return;
-    }
-
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx, sy;
-
-    if (x0 < x1)
-        sx = 1;
-    else
-        sx = -1;
-
-    if (y0 < y1)
-        sy = 1;
-    else
-        sy = -1;
-
-    int err = (dx > dy ? dx : -dy) / 2;
-    int e2;
-
-    while (1)
-    {
-        put_pixel_to_image(image, x0, y0, color);
-        if (x0 == x1 && y0 == y1)
-            break;
-        e2 = err;
-        if (e2 > -dx)
-        {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dy)
-        {
-            err += dx;
-            y0 += sy;
-        }
-    }
-}
-
 void draw_map(t_DrawData *drawData, t_Map *map)
 {
     if (!drawData->mlx || !drawData->window || map->values == NULL)
@@ -102,50 +11,70 @@ void draw_map(t_DrawData *drawData, t_Map *map)
         return;
     int max_z = find_max_z_value(map);
     int min_z = find_min_z_value(map);
-    drawData->scale = drawData->imageSize.y / (max_z - min_z + map->height + map->width);
-    printf("scale: %f\n", drawData->scale);
+float z_scale = 7.5 / (max_z - min_z); // Calculate the z scale
+if ((max_z - min_z) <= 1000)
+    z_scale = 5.0 / (max_z - min_z);
+if ((max_z - min_z) <= 100)
+    z_scale = 2.5 / (max_z - min_z);
+if ((max_z - min_z) <= 10)
+    z_scale = 0.5 / (max_z - min_z);
 
-    for (int y = 0; y < map->height; y++)
+// Calculate the dynamic scale based on image size and map dimensions
+drawData->scale = fmin(drawData->imageSize.x, drawData->imageSize.y) / (map->height + map->width) * 1;
+
+    int map_center_x = (map->width - 1 - (map->height - 1)) * cos(M_PI / 4) * drawData->scale / 2;
+    int map_center_y = ((map->width - 1) + (map->height - 1)) * sin(M_PI / 6) * drawData->scale / 2;
+
+    // Calculate offsets to center the map within the image
+    int offsetX = (drawData->imageSize.x / 1.85) - map_center_x;
+    int offsetY = (drawData->imageSize.y / 1.3) - map_center_y;
+
+
+for (int y = 0; y < map->height; y++)
+{
+    for (int x = 0; x < map->width; x++)
     {
-        for (int x = 0; x < map->width; x++)
+        int z = map->values[y][x];
+        int color = init_color(z, min_z, max_z);
+
+        // Apply the z scale
+        float scaled_z = (z - min_z) * z_scale;
+
+        // Isometric projection using rotation matrix
+        float x_iso = (x - map->width / 2) * drawData->scale;
+        float y_iso = (y - map->height / 2) * drawData->scale;
+        int x2D = (x_iso - y_iso) * cos(M_PI / 4);
+        int y2D = (x_iso + y_iso) * sin(M_PI / 6) - scaled_z * drawData->scale;
+
+        // Center the map
+        x2D += offsetX;
+        y2D += offsetY;
+
+        if (x < map->width - 1)
         {
-            int z = map->values[y][x];
-            int color = init_color(z, min_z, max_z);
-
-            // Isometric projection
-            int x2D = (x - y) * drawData->scale;
-            int y2D = (x + y) * drawData->scale / 2 - z * drawData->scale; // Adjust angle by changing the divisor
-
-            // Center the map
-            x2D += drawData->imageSize.x / 2; // Adjust the x position to center the map
-            y2D += drawData->imageSize.y / 4; // Adjust the y position to center the map
-
-            if (x < map->width - 1)
-            {
-                int next_x2D = ((x + 1) - y) * drawData->scale + drawData->imageSize.x / 2;
-                int next_y2D = ((x + 1) + y) * drawData->scale / 2 - map->values[y][x + 1] * drawData->scale + drawData->imageSize.y / 4;
-                draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color);
-            }
-            if (y < map->height - 1)
-            {
-                int next_x2D = (x - (y + 1)) * drawData->scale + drawData->imageSize.x / 2;
-                int next_y2D = (x + (y + 1)) * drawData->scale / 2 - map->values[y + 1][x] * drawData->scale + drawData->imageSize.y / 4;
-                draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color);
-            }
+            int next_z = map->values[y][x + 1];
+            float scaled_next_z = (next_z - min_z) * z_scale;
+            float next_x_iso = ((x + 1) - map->width / 2) * drawData->scale;
+            float next_y_iso = (y - map->height / 2) * drawData->scale;
+            int next_x2D = (next_x_iso - next_y_iso) * cos(M_PI / 4) + offsetX;
+            int next_y2D = (next_x_iso + next_y_iso) * sin(M_PI / 6) - scaled_next_z * drawData->scale + offsetY;
+            draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color, drawData);
+        }
+        if (y < map->height - 1)
+        {
+            int next_z = map->values[y + 1][x];
+            float scaled_next_z = (next_z - min_z) * z_scale;
+            float next_x_iso = (x - map->width / 2) * drawData->scale;
+            float next_y_iso = ((y + 1) - map->height / 2) * drawData->scale;
+            int next_x2D = (next_x_iso - next_y_iso) * cos(M_PI / 4) + offsetX;
+            int next_y2D = (next_x_iso + next_y_iso) * sin(M_PI / 6) - scaled_next_z * drawData->scale + offsetY;
+            draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color, drawData);
         }
     }
 }
-
-void put_pixel_to_image(void *image, int x, int y, int color)
-{
-    char *buffer;
-    int pixel_bits, line_bytes, endian;
-    buffer = mlx_get_data_addr(image, &pixel_bits, &line_bytes, &endian);
-    int pos = (y * line_bytes) + (x * (pixel_bits / 8));
-    *(int *)(buffer + pos) = color;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     t_DrawData drawData;
     t_Map map;
@@ -154,32 +83,37 @@ int main(void)
     map.width = 0;
     map.height = 0;
 
-    printf("before mapfill\n");
-    if (map_filling(&map) == 0)
+    if (argc == 1 || argc > 2)
     {
-        printf("mapfill\n");
+        printf("Actually it's: %s <filename.fdf>\n", argv[0]);
+        return 1;
+    }
+
+
+    if (map_filling(&map, argv[1]) == 0)
+    {
+        init_draw_data(&drawData);
         drawData.mlx = mlx_init();
         if (!drawData.mlx)
             return 1;
-
         mlx_get_screen_size(drawData.mlx, &drawData.windowSize.x, &drawData.windowSize.y);
         init_window_size(&drawData, &map);
         init_image_size(&drawData, &map);
 
-        drawData.window = mlx_new_window(drawData.mlx, drawData.windowSize.x, drawData.windowSize.y, "MiniLibX Test");
+        drawData.window = mlx_new_window(drawData.mlx, drawData.windowSize.x, drawData.windowSize.y, "FdF");
         if (!drawData.window)
             return 1;
-        print_map(&map);
-        printf("before image\n");
         draw_map(&drawData, &map);
-        printf("after image\n");
         if (drawData.image != NULL)
-        {
-            mlx_put_image_to_window(drawData.mlx, drawData.window, drawData.image, drawData.imagePosition.x, drawData.imagePosition.y);
-        }
-        mlx_key_hook(drawData.window, drawData.mlx, &drawData);
-
+            mlx_put_image_to_window(drawData.mlx, drawData.window, drawData.image, 0, 0);
+        mlx_key_hook(drawData.window, key_event_handler, &drawData);
+        mlx_hook(drawData.window, 17, 0, close_window, &drawData);
         mlx_loop(drawData.mlx);
+    }
+    else 
+    {
+        printf("Error reading the map. Please make sure to give the name of an existing \n.fdf file as an argument. Chceck the presence of the test_maps folder.\nIf not present, create it and place the map files in it.");
+        return 1;
     }
 
     return 0;

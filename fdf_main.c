@@ -2,6 +2,9 @@
 
 void draw_map(t_DrawData *drawData, t_Map *map)
 {
+    t_DrawMapVars vars;
+    t_LineData lineData;
+
     if (!drawData->mlx || !drawData->window || map->values == NULL)
         return;
     if (map->width <= 0 || map->height <= 0)
@@ -9,69 +12,81 @@ void draw_map(t_DrawData *drawData, t_Map *map)
     drawData->image = mlx_new_image(drawData->mlx, drawData->imageSize.x, drawData->imageSize.y);
     if (drawData->image == NULL)
         return;
-    int max_z = find_max_z_value(map);
-    int min_z = find_min_z_value(map);
-float z_scale = 7.5 / (max_z - min_z); // Calculate the z scale
-if ((max_z - min_z) <= 1000)
-    z_scale = 5.0 / (max_z - min_z);
-if ((max_z - min_z) <= 100)
-    z_scale = 2.5 / (max_z - min_z);
-if ((max_z - min_z) <= 10)
-    z_scale = 0.5 / (max_z - min_z);
+    vars.max_z = find_max_z_value(map);
+    vars.min_z = find_min_z_value(map);
+    vars.z_scale = 7.5 / (vars.max_z - vars.min_z);
+    if ((vars.max_z - vars.min_z) <= 1000)
+        vars.z_scale = 5.0 / (vars.max_z - vars.min_z);
+    if ((vars.max_z - vars.min_z) <= 100)
+        vars.z_scale = 2.5 / (vars.max_z - vars.min_z);
+    if ((vars.max_z - vars.min_z) <= 10)
+        vars.z_scale = 0.5 / (vars.max_z - vars.min_z);
 
-// Calculate the dynamic scale based on image size and map dimensions
-drawData->scale = fmin(drawData->imageSize.x, drawData->imageSize.y) / (map->height + map->width) * 1;
+    drawData->scale = fmin(drawData->imageSize.x, drawData->imageSize.y) / (map->height + map->width) * 1;
 
-    int map_center_x = (map->width - 1 - (map->height - 1)) * cos(M_PI / 4) * drawData->scale / 2;
-    int map_center_y = ((map->width - 1) + (map->height - 1)) * sin(M_PI / 6) * drawData->scale / 2;
+    vars.map_center_x = (map->width - 1 - (map->height - 1)) * cos(M_PI / 4) * drawData->scale / 2;
+    vars.map_center_y = ((map->width - 1) + (map->height - 1)) * sin(M_PI / 6) * drawData->scale / 2;
 
-    // Calculate offsets to center the map within the image
-    int offsetX = (drawData->imageSize.x / 1.85) - map_center_x;
-    int offsetY = (drawData->imageSize.y / 1.3) - map_center_y;
+    vars.offsetX = (drawData->imageSize.x / 1.85) - vars.map_center_x;
+    vars.offsetY = (drawData->imageSize.y / 1.3) - vars.map_center_y;
 
-
-for (int y = 0; y < map->height; y++)
-{
-    for (int x = 0; x < map->width; x++)
+    int y = 0;
+    while (y < map->height)
     {
-        int z = map->values[y][x];
-        int color = init_color(z, min_z, max_z);
-
-        // Apply the z scale
-        float scaled_z = (z - min_z) * z_scale;
-
-        // Isometric projection using rotation matrix
-        float x_iso = (x - map->width / 2) * drawData->scale;
-        float y_iso = (y - map->height / 2) * drawData->scale;
-        int x2D = (x_iso - y_iso) * cos(M_PI / 4);
-        int y2D = (x_iso + y_iso) * sin(M_PI / 6) - scaled_z * drawData->scale;
-
-        // Center the map
-        x2D += offsetX;
-        y2D += offsetY;
-
-        if (x < map->width - 1)
+        int x = 0;
+        while (x < map->width)
         {
-            int next_z = map->values[y][x + 1];
-            float scaled_next_z = (next_z - min_z) * z_scale;
-            float next_x_iso = ((x + 1) - map->width / 2) * drawData->scale;
-            float next_y_iso = (y - map->height / 2) * drawData->scale;
-            int next_x2D = (next_x_iso - next_y_iso) * cos(M_PI / 4) + offsetX;
-            int next_y2D = (next_x_iso + next_y_iso) * sin(M_PI / 6) - scaled_next_z * drawData->scale + offsetY;
-            draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color, drawData);
+            int z = map->values[y][x];
+            int color = init_color(z, vars.min_z, vars.max_z);
+
+            vars.scaled_z = (z - vars.min_z) * vars.z_scale;
+
+            vars.x_iso = (x - map->width / 2) * drawData->scale;
+            vars.y_iso = (y - map->height / 2) * drawData->scale;
+            vars.x2D = (vars.x_iso - vars.y_iso) * cos(M_PI / 4);
+            vars.y2D = (vars.x_iso + vars.y_iso) * sin(M_PI / 6) - vars.scaled_z * drawData->scale;
+
+            vars.x2D += vars.offsetX;
+            vars.y2D += vars.offsetY;
+
+            if (x < map->width - 1)
+            {
+                int next_z = map->values[y][x + 1];
+                vars.scaled_next_z = (next_z - vars.min_z) * vars.z_scale;
+                vars.next_x_iso = ((x + 1) - map->width / 2) * drawData->scale;
+                vars.next_y_iso = (y - map->height / 2) * drawData->scale;
+                vars.next_x2D = (vars.next_x_iso - vars.next_y_iso) * cos(M_PI / 4) + vars.offsetX;
+                vars.next_y2D = (vars.next_x_iso + vars.next_y_iso) * sin(M_PI / 6) - vars.scaled_next_z * drawData->scale + vars.offsetY;
+
+                lineData.x0 = vars.x2D;
+                lineData.y0 = vars.y2D;
+                lineData.x1 = vars.next_x2D;
+                lineData.y1 = vars.next_y2D;
+                lineData.color = color;
+
+                draw_line(&lineData, drawData);
+            }
+            if (y < map->height - 1)
+            {
+                int next_z = map->values[y + 1][x];
+                vars.scaled_next_z = (next_z - vars.min_z) * vars.z_scale;
+                vars.next_x_iso = (x - map->width / 2) * drawData->scale;
+                vars.next_y_iso = ((y + 1) - map->height / 2) * drawData->scale;
+                vars.next_x2D = (vars.next_x_iso - vars.next_y_iso) * cos(M_PI / 4) + vars.offsetX;
+                vars.next_y2D = (vars.next_x_iso + vars.next_y_iso) * sin(M_PI / 6) - vars.scaled_next_z * drawData->scale + vars.offsetY;
+
+                lineData.x0 = vars.x2D;
+                lineData.y0 = vars.y2D;
+                lineData.x1 = vars.next_x2D;
+                lineData.y1 = vars.next_y2D;
+                lineData.color = color;
+
+                draw_line(&lineData, drawData);
+            }
+            x++;
         }
-        if (y < map->height - 1)
-        {
-            int next_z = map->values[y + 1][x];
-            float scaled_next_z = (next_z - min_z) * z_scale;
-            float next_x_iso = (x - map->width / 2) * drawData->scale;
-            float next_y_iso = ((y + 1) - map->height / 2) * drawData->scale;
-            int next_x2D = (next_x_iso - next_y_iso) * cos(M_PI / 4) + offsetX;
-            int next_y2D = (next_x_iso + next_y_iso) * sin(M_PI / 6) - scaled_next_z * drawData->scale + offsetY;
-            draw_line(drawData->image, x2D, y2D, next_x2D, next_y2D, color, drawData);
-        }
+        y++;
     }
-}
 }
 
 int main(int argc, char **argv)
@@ -89,9 +104,9 @@ int main(int argc, char **argv)
         return 1;
     }
 
-
     if (map_filling(&map, argv[1]) == 0)
     {
+        drawData.map = &map;
         init_draw_data(&drawData);
         drawData.mlx = mlx_init();
         if (!drawData.mlx)
@@ -115,6 +130,7 @@ int main(int argc, char **argv)
         printf("Error reading the map. Please make sure to give the name of an existing \n.fdf file as an argument. Chceck the presence of the test_maps folder.\nIf not present, create it and place the map files in it.");
         return 1;
     }
-
+    free_map(&map);
+    free_draw_data(&drawData);
     return 0;
 }

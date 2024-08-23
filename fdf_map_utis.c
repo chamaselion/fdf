@@ -2,20 +2,28 @@
 
 int find_max_z_value(t_Map *map)
 {
+    int max_z;
+    int y;
+    int x;
+
     if (map == NULL || map->values == NULL)
         return 0;
 
-    int max_z = map->values[0][0];
+    max_z = map->values[0][0];
+    y = 0;
 
-    for (int y = 0; y < map->height; y++)
+    while (y < map->height)
     {
-        for (int x = 0; x < map->width; x++)
+        x = 0;
+        while (x < map->width)
         {
             if (map->values[y][x] > max_z)
             {
                 max_z = map->values[y][x];
             }
+            x++;
         }
+        y++;
     }
 
     return max_z;
@@ -23,34 +31,64 @@ int find_max_z_value(t_Map *map)
 
 int find_min_z_value(t_Map *map)
 {
-    int min_z = map->values[0][0];
-    for (int y = 0; y < map->height; y++)
+    int min_z;
+    int y;
+    int x;
+
+    if (map == NULL || map->values == NULL)
+        return 0;
+
+    min_z = map->values[0][0];
+    y = 0;
+
+    while (y < map->height)
     {
-        for (int x = 0; x < map->width; x++)
+        x = 0;
+        while (x < map->width)
         {
             if (map->values[y][x] < min_z)
+            {
                 min_z = map->values[y][x];
+            }
+            x++;
         }
+        y++;
     }
+
     return min_z;
 }
 
 int *string_to_int_array(char *str, int *outLength)
 {
-    int length = strlen(str);
-    int numElements = count_integers_in_string(str);
-    int *array = (int *)malloc(sizeof(int) * numElements);
-    if (array == NULL)
+    int length;
+    int numElements;
+    int *array;
+    char *tempStr;
+    int tempStrIndex;
+    int arrayIndex;
+    int i;
+
+    i = 0;
+    tempStr = (char *)malloc(sizeof(char) * 11);
+    if (tempStr == NULL)
     {
         *outLength = 0;
         return NULL;
     }
+    length = strlen(str);
+    numElements = count_integers_in_string(str);
+    array = (int *)malloc(sizeof(int) * numElements);
+    if (array == NULL)
+    {
+        free(tempStr);
+        *outLength = 0;
+        return NULL;
+    }
 
-    char tempStr[11]; 
-    int tempStrIndex = 0;
-    int arrayIndex = 0;
+    tempStrIndex = 0;
+    arrayIndex = 0;
 
-    for (int i = 0; i <= length; i++)
+    while (i <= length)
     {
         if (isspace(str[i]) || str[i] == '\0')
         {
@@ -65,8 +103,9 @@ int *string_to_int_array(char *str, int *outLength)
         {
             tempStr[tempStrIndex++] = str[i];
         }
+        i++;
     }
-
+    free(tempStr);
     *outLength = numElements;
     return array;
 }
@@ -74,15 +113,18 @@ int *string_to_int_array(char *str, int *outLength)
 void fill_map_lines(t_Map *map, char *line)
 {
     int length;
-    int *intArray = string_to_int_array(line, &length);
+    int *intArray;
+    int **new_values;
+    size_t original_size;
+
+    intArray = string_to_int_array(line, &length);
     if (intArray == NULL)
         return;
-
-    // Allocate memory for the new row
-    int **new_values = (int **)ft_realloc(map->values, sizeof(int *) * (map->height + 1));
+    original_size = sizeof(int *) * map->height;
+    new_values = (int **)ft_realloc(map->values, original_size, sizeof(int *) * (map->height + 1));
     if (new_values == NULL)
     {
-        free(intArray); // Free the allocated intArray if realloc fails
+        free(intArray);
         perror("Error reallocating memory");
         return;
     }
@@ -97,8 +139,12 @@ int map_filling(t_Map *map, char *file_name)
 {
     int fd;
     char *line;
-    char *folder_line = "test_maps/";
-    char *file_path = malloc(sizeof(char) * (strlen(folder_line) + strlen(file_name) + 1));
+    char *folder_line;
+    char *file_path;
+
+    folder_line = "test_maps/";
+    file_path = malloc(sizeof(char) * (strlen(folder_line) + strlen(file_name) + 1));
+
     if (file_path == NULL)
         return (-1);
     strcpy(file_path, folder_line);
@@ -112,27 +158,26 @@ int map_filling(t_Map *map, char *file_name)
         exit(1);
         return (-1);
     }
-
+    free(file_path);
     while ((line = get_next_line(fd)) != NULL)
     {
         fill_map_lines(map, line);
-        if (map->height > 0 && map->values != NULL && map->values[0] != NULL)
-        {
-        }
         free(line);
     }
 
     if (map->height == 0)
     {
         close(fd);
-        perror("Error reading file");
-        return (-1);
+        printf("Error reading file\n");
+        exit(1);
     }
 
     close(fd);
     return (0);
 }
 
+
+/*
 void print_map(t_Map *map)
 {
     if (map == NULL || map->values == NULL)
@@ -151,3 +196,4 @@ void print_map(t_Map *map)
         printf("\n");
     }
 }
+*/

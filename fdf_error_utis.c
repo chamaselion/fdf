@@ -14,7 +14,6 @@ void free_draw_data(t_DrawData *drawData)
     }
     if (drawData->mlx != NULL)
     {
-        // Assuming mlx_destroy_display is available in your version of MiniLibX
         mlx_destroy_display(drawData->mlx);
         free(drawData->mlx);
         drawData->mlx = NULL;
@@ -28,5 +27,30 @@ void free_draw_data(t_DrawData *drawData)
     {
         free(drawData->scaled_image);
         drawData->scaled_image = NULL;
+    }
+}
+
+void free_map(t_Map *map)
+{
+    int i;
+
+    i = 0;
+    if (map != NULL)
+    {
+        if (map->values != NULL)
+        {
+            while (i < map->height)
+            {
+                if (map->values[i] != NULL)
+                {
+                    free(map->values[i]);
+                    map->values[i] = NULL;
+                }
+                i++;
+            }
+            free(map->values);
+            map->values = NULL;
+        }
+        //free(map);
     }
 }

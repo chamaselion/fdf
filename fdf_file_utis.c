@@ -2,19 +2,26 @@
 
 int open_file(const char *filepath)
 {
-    int fd = open(filepath, O_RDONLY);
+    int fd;
+    fd = open(filepath, O_RDONLY);
     return fd;
 }
 
 int count_integers_in_string(char *str)
 {
-    int count = 0;
-    int length = strlen(str);
-    int inNumber = 0;
+    int count;
+    int length;
+    int inNumber;
+    int c;
 
-    for (int i = 0; i <= length - 1; i++)
+    count = 0;
+    length = strlen(str);
+    inNumber = 0;
+    c = 0;
+
+    while (c <= length - 1)
     {
-        if (!isspace(str[i]) && str[i] != '\0')
+        if (!isspace(str[c]) && str[c] != '\0')
         {
             if (!inNumber)
             {
@@ -26,6 +33,7 @@ int count_integers_in_string(char *str)
         {
             inNumber = 0;
         }
+    c++;
     }
 
     return count;

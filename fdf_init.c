@@ -2,7 +2,9 @@
 
 void init_window_size(t_DrawData *drawData, t_Map *map)
 {
-    int a = 175;
+    int a;
+    
+    a = 175;
   //  int b = 1300;
     drawData->windowSize.x -= a * 0.5625;
     drawData->windowSize.y -= a;
@@ -23,6 +25,10 @@ int interpolate(int start, int end, float factor)
 
 int init_color(int z, int min_z, int max_z)
 {
+    int red;
+    int green;
+    int blue;
+    float normalized;
     // Check if z is negative
     if (z < 0) {
         // Return green color
@@ -36,14 +42,30 @@ int init_color(int z, int min_z, int max_z)
     }
 
     // Normalize the height value to a range between 0 and 1
-    float normalized = (float)(z - min_z) / (max_z - min_z);
+    normalized = (float)(z - min_z) / (max_z - min_z);
 
     // Map the normalized value to a color gradient from white to magenta
-    int red = (int)(normalized * 255);
-    int green = (int)((1 - normalized) * 255);
-    int blue = 255;
+    red = (int)(normalized * 255);
+    green = (int)((1 - normalized) * 255);
+    blue = 255;
 
     return (red << 16) | (green << 8) | blue;
+}
+
+void init_window_size_vars(t_ImageSize *size)
+{
+    size->x = 0;
+    size->y = 0;
+    size->sx = 0;
+    size->sy = 0;
+}
+
+void init_image_size_vars(t_ImageSize *size)
+{
+    size->x = 0;
+    size->y = 0;
+    size->sx = 0;
+    size->sy = 0;
 }
 
 void init_draw_data(t_DrawData *drawData)
@@ -51,14 +73,8 @@ void init_draw_data(t_DrawData *drawData)
     drawData->mlx = NULL;
     drawData->window = NULL;
     drawData->image = NULL;
-    drawData->windowSize.x = 0;
-    drawData->windowSize.y = 0;
-    drawData->windowSize.sx = 0;
-    drawData->windowSize.sy = 0;
-    drawData->imageSize.x = 0;
-    drawData->imageSize.y = 0;
-    drawData->imageSize.sx = 0;
-    drawData->imageSize.sy = 0;
+    init_window_size_vars(&drawData->windowSize);
+    init_image_size_vars(&drawData->imageSize);
     drawData->scaleX = 1.0;
     drawData->scaleY = 1.0;
     drawData->scale = 1.0f;

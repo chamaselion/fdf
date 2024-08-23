@@ -9,56 +9,55 @@ void put_pixel_to_image(void *image, int x, int y, int color)
     *(int *)(buffer + pos) = color;
 }
 
-void draw_line(void *image, int x0, int y0, int x1, int y1, int color, t_DrawData *drawData)
+void draw_line(t_LineData *lineData, t_DrawData *drawData)
 {
-    int image_width = drawData->windowSize.x;
-    int image_height = drawData->windowSize.y;
-    if (x0 < 0 || x0 >= image_width || y0 < 0 || y0 >= image_height ||
-        x1 < 0 || x1 >= image_width || y1 < 0 || y1 >= image_height)
+    int image_width;
+    int image_height;
+    
+    image_width = drawData->windowSize.x;
+    image_height = drawData->windowSize.y;
+
+
+    if (lineData->x0 < 0 || lineData->x0 >= image_width || lineData->y0 < 0 || lineData->y0 >= image_height ||
+        lineData->x1 < 0 || lineData->x1 >= image_width || lineData->y1 < 0 || lineData->y1 >= image_height)
     {
-        printf("Coordinates out of bounds: (%d, %d) to (%d, %d)\n", x0, y0, x1, y1);
+        printf("Coordinates out of bounds: (%d, %d) to (%d, %d)\n", lineData->x0, lineData->y0, lineData->x1, lineData->y1);
         return;
     }
 
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx, sy;
+    lineData->dx = abs(lineData->x1 - lineData->x0);
+    lineData->dy = abs(lineData->y1 - lineData->y0);
 
-    if (x0 < x1)
-        sx = 1;
+    if (lineData->x0 < lineData->x1)
+        lineData->sx = 1;
     else
-        sx = -1;
-    if (y0 < y1)
-        sy = 1;
+        lineData->sx = -1;
+    if (lineData->y0 < lineData->y1)
+        lineData->sy = 1;
     else
-        sy = -1;
-    int err;
-    if (dx > dy)
-    {
-        err = dx;
-    }
+        lineData->sy = -1;
+
+    if (lineData->dx > lineData->dy)
+        lineData->err = lineData->dx;
     else
-    {
-        err = -dy;
-    }
-    err /= 2;
-    int e2;
+        lineData->err = -lineData->dy;
+    lineData->err /= 2;
 
     while (1)
     {
-        put_pixel_to_image(image, x0, y0, color);
-        if (x0 == x1 && y0 == y1)
+        put_pixel_to_image(drawData->image, lineData->x0, lineData->y0, lineData->color);
+        if (lineData->x0 == lineData->x1 && lineData->y0 == lineData->y1)
             break;
-        e2 = err;
-        if (e2 > -dx)
+        lineData->e2 = lineData->err;
+        if (lineData->e2 > -lineData->dx)
         {
-            err -= dy;
-            x0 += sx;
+            lineData->err -= lineData->dy;
+            lineData->x0 += lineData->sx;
         }
-        if (e2 < dy)
+        if (lineData->e2 < lineData->dy)
         {
-            err += dx;
-            y0 += sy;
+            lineData->err += lineData->dx;
+            lineData->y0 += lineData->sy;
         }
     }
 }
@@ -71,6 +70,7 @@ int close_window(t_DrawData *drawData)
         drawData->window = NULL;
     }
     free_draw_data(drawData);
+    free_map(drawData->map);
     exit(0);
     return 0;
 }
@@ -85,6 +85,7 @@ int key_event_handler(int keycode, t_DrawData *drawData)
             drawData->window = NULL;
         }
         free_draw_data(drawData);
+        free_map(drawData->map);
         exit(0);
     }
     // Handle other keys here

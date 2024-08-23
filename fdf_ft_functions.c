@@ -1,6 +1,8 @@
 #include "fdf.h"
 
-void *ft_realloc(void *ptr, size_t new_size)
+#include "fdf.h"
+
+void *ft_realloc(void *ptr, size_t old_size, size_t new_size)
 {
     void *new_ptr;
 
@@ -16,7 +18,14 @@ void *ft_realloc(void *ptr, size_t new_size)
 
     if (ptr != NULL)
     {
-        memcpy(new_ptr, ptr, new_size);
+        if (old_size < new_size)
+        {
+            memmove(new_ptr, ptr, old_size);
+        }
+        else
+        {
+            memmove(new_ptr, ptr, new_size);
+        }
         free(ptr);
     }
 

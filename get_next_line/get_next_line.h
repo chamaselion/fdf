@@ -26,7 +26,7 @@ typedef struct s_gnl
 }			t_gnl;
 
 char		*ft_strchr(const char *s, int c);
-int		ft_strlen(const char *str);
+size_t		ft_strlen(const char *str);
 char		*get_next_line(int fd);
 void		*ft_memmove(void *dst, const void *src, ssize_t len);
 char		*ft_strjoin(char *s1, char *s2);

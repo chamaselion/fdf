@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 16:13:00 by bszikora          #+#    #+#             */
-/*   Updated: 2024/04/15 17:32:51 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/04/20 15:29:44 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,8 @@ int	process_buffer(t_gnl *gnl)
 	}
 	if (gnl->bytes_read <= 0)
 	{
-		if (gnl->buffer[0] != NULL)
-		{
-			free(gnl->buffer[0]);
-			gnl->buffer[0] = NULL;
-		}
+		free(gnl->buffer[0]);
+		gnl->buffer[0] = NULL;
 	}
 	return (1);
 }
@@ -85,7 +82,7 @@ char	*get_next_line(int fd)
 	gnl.line = NULL;
 	if (initialize_buffer0(&gnl) == 0)
 		return (NULL);
-    gnl.buffer[1] = malloc(BUFFER_SIZE + 1);
+	gnl.buffer[1] = malloc(BUFFER_SIZE + 1);
 	while (gnl.newline_pos == NULL)
 	{
 		gnl.bytes_read = read(fd, gnl.buffer[1], BUFFER_SIZE);

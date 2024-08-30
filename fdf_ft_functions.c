@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:14:54 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 13:15:11 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 14:09:49 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 	if (ptr != NULL)
 	{
 		if (old_size < new_size)
-			memmove(new_ptr, ptr, old_size);
+			ft_memmove(new_ptr, ptr, old_size);
 		else
-			memmove(new_ptr, ptr, new_size);
+			ft_memmove(new_ptr, ptr, new_size);
 		free(ptr);
 	}
 	return (new_ptr);

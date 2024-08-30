@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 16:11:19 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 16:12:41 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 13:50:33 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	parse_string(char *str, int *array, char *tempstr, int *index)
 {
 	int	length;
 
-	length = strlen(str);
+	length = ft_strlen(str);
 	while (index[2] <= length)
 	{
 		if (isspace(str[index[2]]) || str[index[2]] == '\0')
@@ -50,7 +50,7 @@ void	parse_string(char *str, int *array, char *tempstr, int *index)
 			if (index[0] > 0)
 			{
 				tempstr[index[0]] = '\0';
-				array[index[1]++] = atoi(tempstr);
+				array[index[1]++] = ft_atoi(tempstr);
 				index[0] = 0;
 			}
 		}

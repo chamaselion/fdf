@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:13:15 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 14:41:21 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:47:37 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,14 @@ void	free_draw_data(t_drawdata *drawdata)
 	}
 	if (drawdata->mlx != NULL)
 	{
-		mlx_destroy_display(drawdata->mlx);
 		free(drawdata->mlx);
 		drawdata->mlx = NULL;
 	}
 	if (drawdata->original_data != NULL)
-		free_n_null((void **)&drawdata->original_data);
+	{
+		free(drawdata->original_data);
+		drawdata->original_data = NULL;
+	}
 	if (drawdata->scaled_image != NULL)
 		free_n_null((void **)&drawdata->scaled_image);
 }

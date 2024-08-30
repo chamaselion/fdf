@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:21:01 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 16:54:17 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 17:52:53 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ int	lessdo_fdf(t_drawdata *drawdata, t_map *map)
 	drawdata->mlx = mlx_init();
 	if (!drawdata->mlx)
 		return (1);
-	mlx_get_screen_size(drawdata->mlx, &drawdata->windowsize.x,
-		&drawdata->windowsize.y);
+	drawdata->windowsize.x = 1920;
+	drawdata->windowsize.y = 1080;
 	init_window_size(drawdata);
 	init_image_size(drawdata);
 	drawdata->window = mlx_new_window(drawdata->mlx, drawdata->windowsize.x,
@@ -117,16 +117,16 @@ int	main(int argc, char **argv)
 	map.height = 0;
 	if (argc == 1 || argc > 2)
 	{
-		printf("actually it's: %s <filename.fdf>\n", argv[0]);
+		ft_printf("actually it's: %s <filename.fdf>\n", argv[0]);
 		return (1);
 	}
 	if (map_filling(&map, argv[1]) == 0)
 		lessdo_fdf(&drawdata, &map);
 	else
 	{
-		printf("error. please make sure to give the name of an existing \n");
-		printf(".fdf file as an argument. check the test_maps folder.\n");
-		printf("if not present,create it and place the map files in it.\n");
+		ft_printf("error. please make sure to give the name of an existing \n");
+		ft_printf(".fdf file as an argument. check the test_maps folder.\n");
+		ft_printf("if not present,create it and place the map files in it.\n");
 		return (1);
 	}
 	free_map(&map);

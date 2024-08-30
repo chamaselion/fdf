@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:26:02 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 14:41:47 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/28 14:56:24 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	count_integers_in_string(char *str)
 	int	c;
 
 	count = 0;
-	length = strlen(str);
+	length = ft_strlen(str);
 	innumber = 0;
 	c = 0;
 	while (c <= length - 1)

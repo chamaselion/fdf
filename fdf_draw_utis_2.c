@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:54:42 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 14:54:57 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:50:31 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 
 int	key_event_handler(int keycode, t_drawdata *drawdata)
 {
-	if (keycode == 65307)
+	if (keycode == 53)
 	{
 		if (drawdata->window != NULL)
 		{
 			mlx_destroy_window(drawdata->mlx, drawdata->window);
 			drawdata->window = NULL;
 		}
-		free_draw_data(drawdata);
 		free_map(drawdata->map);
 		exit(0);
 	}

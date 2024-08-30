@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:11:38 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 14:54:19 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:51:52 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	draw_line(t_linedata *linedata, t_drawdata *drawdata)
 		|| linedata->x1 >= image_width || linedata->y1 < 0
 		|| linedata->y1 >= image_height)
 	{
-		printf("coordinates out of bounds: (%d, %d) to (%d, %d)\n",
+		ft_printf("coordinates out of bounds: (%d, %d) to (%d, %d)\n",
 			linedata->x0, linedata->y0, linedata->x1, linedata->y1);
 		return ;
 	}
@@ -93,7 +93,6 @@ int	close_window(t_drawdata *drawdata)
 		mlx_destroy_window(drawdata->mlx, drawdata->window);
 		drawdata->window = NULL;
 	}
-	free_draw_data(drawdata);
 	free_map(drawdata->map);
 	exit(0);
 	return (0);

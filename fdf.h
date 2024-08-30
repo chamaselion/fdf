@@ -6,15 +6,15 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:33:47 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 16:22:27 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 17:26:47 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # define FDF_H
 
-# include "get_next_line/get_next_line.h"
-# include "mlx.h"
+# include "libft/get_next_line/get_next_line.h"
+# include "mlx/mlx.h"
 # include <ctype.h> // For isspace
 # include <fcntl.h>
 # include <limits.h>
@@ -23,6 +23,7 @@
 # include <stdlib.h> // For malloc, free, and atoi
 # include <string.h> // For strlen
 # include <unistd.h>
+# include "libft/libft.h"
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846

@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 16:15:13 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/29 13:52:18 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:14:12 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ char	*create_file_path(char *folder_line, char *file_name)
 				+ ft_strlen(file_name) + 1));
 	if (file_path == NULL)
 		return (NULL);
-	strcpy(file_path, folder_line);
-	strcat(file_path, file_name);
+	ft_strcpy(file_path, folder_line);
+	ft_strcat(file_path, file_name);
 	return (file_path);
 }
 

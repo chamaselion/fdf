@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:33:47 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/29 17:26:47 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:13:06 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define FDF_H
 
 # include "libft/get_next_line/get_next_line.h"
+# include "libft/libft.h"
 # include "mlx/mlx.h"
 # include <ctype.h> // For isspace
 # include <fcntl.h>
@@ -23,7 +24,6 @@
 # include <stdlib.h> // For malloc, free, and atoi
 # include <string.h> // For strlen
 # include <unistd.h>
-# include "libft/libft.h"
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -136,6 +136,9 @@ int					count_integers_in_string(char *str);
 // custom functions
 void				*ft_realloc(void *ptr, size_t original_size,
 						size_t new_size);
+char				*ft_strcat(char *dest, const char *src);
+char				*ft_strcpy(char *dest, const char *src);
+int					ft_isspace(int c);
 
 // initialization fucntions
 void				init_window_size(t_drawdata *drawdata);

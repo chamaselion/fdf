@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:26:02 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/28 14:56:24 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:13:51 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	count_integers_in_string(char *str)
 	c = 0;
 	while (c <= length - 1)
 	{
-		if (!isspace(str[c]) && str[c] != '\0')
+		if (!ft_isspace(str[c]) && str[c] != '\0')
 		{
 			if (!innumber)
 			{

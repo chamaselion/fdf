@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 16:15:13 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/23 16:29:52 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/29 13:52:18 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ char	*create_file_path(char *folder_line, char *file_name)
 {
 	char	*file_path;
 
-	file_path = malloc(sizeof(char) * (strlen(folder_line) + strlen(file_name)
-				+ 1));
+	file_path = malloc(sizeof(char) * (ft_strlen(folder_line)
+				+ ft_strlen(file_name) + 1));
 	if (file_path == NULL)
 		return (NULL);
 	strcpy(file_path, folder_line);
@@ -33,7 +33,7 @@ int	open_file_with_error_handling(char *file_path)
 	if (fd <= 1)
 	{
 		free(file_path);
-		printf("error. if test_maps folder is not present, create it plz.\n");
+		ft_printf("error. if test_maps folder is not there, create it plz.\n");
 		exit(1);
 	}
 	free(file_path);
@@ -58,7 +58,7 @@ void	check_map_height(t_map *map, int fd)
 	if (map->height == 0)
 	{
 		close(fd);
-		printf("error reading file\n");
+		ft_printf("error reading file\n");
 		exit(1);
 	}
 }

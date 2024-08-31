@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:33:47 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/30 16:13:06 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:29:41 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define FDF_H
 
 # include "libft/get_next_line/get_next_line.h"
-# include "libft/libft.h"
 # include "mlx/mlx.h"
 # include <ctype.h> // For isspace
 # include <fcntl.h>
@@ -78,6 +77,7 @@ typedef struct s_map
 	int				width;
 	int				height;
 	int				**values;
+	int				**mapcolor;
 }					t_map;
 
 typedef struct s_drawdata
@@ -109,6 +109,14 @@ typedef struct s_drawparams
 	t_linedata		*linedata;
 }					t_drawparams;
 
+typedef struct s_parseparams
+{
+	int				*array;
+	int				*color_array;
+	char			*tempstr;
+	int				*index;
+}					t_parseparams;
+
 // draw utilities
 void				put_pixel_to_image(void *image, int x, int y, int color);
 void				draw_line(t_linedata *linedata, t_drawdata *drawdata);
@@ -134,11 +142,11 @@ int					open_file(const char *filepath);
 int					count_integers_in_string(char *str);
 
 // custom functions
-void				*ft_realloc(void *ptr, size_t original_size,
-						size_t new_size);
-char				*ft_strcat(char *dest, const char *src);
-char				*ft_strcpy(char *dest, const char *src);
+void				*ft_realloc(void *ptr, int original_size, int new_size);
 int					ft_isspace(int c);
+char				*ft_strcpy(char *dest, const char *src);
+char				*ft_strcat(char *dest, const char *src);
+long				ft_strtol(const char *str, char **endptr);
 
 // initialization fucntions
 void				init_window_size(t_drawdata *drawdata);
@@ -148,11 +156,16 @@ int					init_color(int z, int min_z, int max_z);
 void				init_draw_data(t_drawdata *drawdata);
 void				init_window_size_vars(t_imagesize *size);
 void				initialize_z_scale(t_map *map, t_drawmapvars *vars);
+int					*allocate_array(int numelements, char *tempstr,
+						int *outlength);
+int					*initialize_memory(char **tempstr, int **index,
+						int *outlength);
 
 // map utilities
 int					find_max_z_value(t_map *map);
 int					find_min_z_value(t_map *map);
-int					*string_to_int_array(char *str, int *outlength);
+int					*string_to_int_array(char *str, int *outlength,
+						int **color_array);
 void				fill_map_lines(t_map *map, char *line);
 int					map_filling(t_map *map, char *file_name);
 void				print_map(t_map *map);

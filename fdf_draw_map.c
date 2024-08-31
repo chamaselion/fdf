@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 16:19:33 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/29 16:40:09 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 13:36:40 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,11 @@ void	draw_horizontal_line(t_drawparams *params, int x, int y, int *z)
 void	calculate_iso_coordinates(t_drawparams *params, int x, int y, int *z)
 {
 	z[0] = params->map->values[y][x];
-	params->drawdata->color = init_color(z[0], params->vars->min_z,
-			params->vars->max_z);
+	if (params->map->mapcolor[y][x] == -1)
+		params->drawdata->color = init_color(z[0], params->vars->min_z,
+				params->vars->max_z);
+	else
+		params->drawdata->color = params->map->mapcolor[y][x];
 	params->vars->scaled_z = (z[0] - params->vars->min_z)
 		* params->vars->z_scale;
 	params->vars->x_iso = (x - params->map->width / 2)

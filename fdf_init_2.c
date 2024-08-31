@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 14:42:35 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/28 14:56:27 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:03:48 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,37 @@ void	initialize_z_scale(t_map *map, t_drawmapvars *vars)
 {
 	vars->max_z = find_max_z_value(map);
 	vars->min_z = find_min_z_value(map);
-	vars->z_scale = 7.5 / (vars->max_z - vars->min_z);
+	vars->z_scale = 3.5 / (vars->max_z - vars->min_z);
 	if ((vars->max_z - vars->min_z) <= 1000)
-		vars->z_scale = 5.0 / (vars->max_z - vars->min_z);
+		vars->z_scale = 3.0 / (vars->max_z - vars->min_z);
 	if ((vars->max_z - vars->min_z) <= 100)
 		vars->z_scale = 2.5 / (vars->max_z - vars->min_z);
 	if ((vars->max_z - vars->min_z) <= 10)
 		vars->z_scale = 0.5 / (vars->max_z - vars->min_z);
+}
+
+int	*initialize_memory(char **tempstr, int **index, int *outlength)
+{
+	*index = (int *)malloc(sizeof(int) * 3);
+	*tempstr = (char *)malloc(sizeof(char) * 11);
+	if (*tempstr == NULL)
+	{
+		*outlength = 0;
+		return (NULL);
+	}
+	return (*index);
+}
+
+int	*allocate_array(int numelements, char *tempstr, int *outlength)
+{
+	int	*array;
+
+	array = (int *)malloc(sizeof(int) * numelements);
+	if (array == NULL)
+	{
+		free(tempstr);
+		*outlength = 0;
+		return (NULL);
+	}
+	return (array);
 }

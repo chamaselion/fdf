@@ -6,13 +6,13 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:14:54 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/30 16:12:01 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:32:19 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
+void	*ft_realloc(void *ptr, int old_size, int new_size)
 {
 	void	*new_ptr;
 
@@ -23,13 +23,16 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 	}
 	new_ptr = malloc(new_size);
 	if (new_ptr == NULL)
+	{
+		perror("Error allocating memory");
 		return (NULL);
+	}
 	if (ptr != NULL)
 	{
 		if (old_size < new_size)
-			ft_memmove(new_ptr, ptr, old_size);
+			memmove(new_ptr, ptr, old_size);
 		else
-			ft_memmove(new_ptr, ptr, new_size);
+			memmove(new_ptr, ptr, new_size);
 		free(ptr);
 	}
 	return (new_ptr);

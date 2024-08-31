@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:31:24 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/29 13:55:01 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 13:41:47 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,25 +66,29 @@ int	find_min_z_value(t_map *map)
 
 void	fill_map_lines(t_map *map, char *line)
 {
-	int		length;
-	int		*intarray;
-	int		**new_values;
-	size_t	original_size;
+	int	*length;
+	int	*intarray;
+	int	*colorarray;
+	int	**new_values;
+	int	**new_colors;
 
-	intarray = string_to_int_array(line, &length);
-	if (intarray == NULL)
+	length = malloc(sizeof(int) * 2);
+	intarray = string_to_int_array(line, &length[0], &colorarray);
+	if (intarray == NULL || colorarray == NULL)
 		return ;
-	original_size = sizeof(int *) * map->height;
-	new_values = (int **)ft_realloc(map->values, original_size, sizeof(int *)
+	length[1] = sizeof(int *) * map->height;
+	new_values = (int **)ft_realloc(map->values, length[1], sizeof(int *)
 			* (map->height + 1));
-	if (new_values == NULL)
+	new_colors = (int **)ft_realloc(map->mapcolor, length[1], sizeof(int *)
+			* (map->height + 1));
+	if (new_values == NULL || new_colors == NULL)
 	{
 		free(intarray);
-		perror("error reallocating memory");
+		free(colorarray);
 		return ;
 	}
-	map->values = new_values;
-	map->values[map->height] = intarray;
-	map->width = length;
-	map->height++;
+	return (map->values = new_values, map->mapcolor = new_colors,
+		map->values[map->height] = intarray,
+		map->mapcolor[map->height] = colorarray, map->width = length[0],
+		map->height++, free(length));
 }

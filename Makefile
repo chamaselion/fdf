@@ -13,6 +13,7 @@ SRCS        :=      fdf_draw_map.c \
                           fdf_map_filling.c \
                           fdf_map_utis.c \
                           str_to_intarr.c \
+						  fdf_ft_strtol.c
                          
 OBJS        := $(SRCS:.c=.o)
 
@@ -40,7 +41,7 @@ fclean:     clean
 			@ $(MAKE) -C libft fclean
 			@ ${RM} ${NAME}
 			@ rm -f libmlx.a
-			@ $(MAKE) -C mlx fclean
+			@ $(MAKE) -C mlx clean
 			@ ${RM} libft/libft.a
 
 re:         fclean all

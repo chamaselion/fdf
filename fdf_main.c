@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 13:21:01 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/30 16:15:09 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:38:39 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ int	main(int argc, char **argv)
 	t_map		map;
 
 	map.values = NULL;
+	map.mapcolor = NULL;
 	map.width = 0;
 	map.height = 0;
 	if (argc == 1 || argc > 2)

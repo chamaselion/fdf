@@ -6,7 +6,7 @@
 /*   By: bszikora <bszikora@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 16:15:13 by bszikora          #+#    #+#             */
-/*   Updated: 2024/08/30 15:14:12 by bszikora         ###   ########.fr       */
+/*   Updated: 2024/08/31 13:44:13 by bszikora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	open_file_with_error_handling(char *file_path)
 	if (fd <= 1)
 	{
 		free(file_path);
-		ft_printf("error. if test_maps folder is not there, create it plz.\n");
+		printf("error. if test_maps folder is not present, create it plz.\n");
 		exit(1);
 	}
 	free(file_path);
@@ -58,7 +58,7 @@ void	check_map_height(t_map *map, int fd)
 	if (map->height == 0)
 	{
 		close(fd);
-		ft_printf("error reading file\n");
+		printf("error reading file\n");
 		exit(1);
 	}
 }
